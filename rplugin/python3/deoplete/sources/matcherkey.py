@@ -29,8 +29,10 @@ def get_jira_candidates(current_prefix):
     # current_prefix == context['complete_str']
     candidates = [line.split('\t')[:2]
                   for line in JIRA_CANDIDATES.strip().splitlines()]
+    max_ticket_len = max(len(ticket) for ticket, _title in candidates)
+    ticket_formatter = '%' + str(max_ticket_len) + 's'
     return [{'word': ticket,
-             'abbr': ticket + ' ' + title,
+             'abbr': ticket_formatter % ticket + ' ' + title,
              'custom_key': current_prefix + title, }
             for ticket, title in candidates]
 
@@ -52,12 +54,11 @@ class Source(Base):
     def __init__(self, vim):
         Base.__init__(self, vim)
 
-        self.debug_enabled = False
         self.name = 'MK'
         self.mark = '[MK]'
 
         self.is_volatile = False
-        self.matchers = ['matcher_cpsm']
+        # self.matchers = ['matcher_cpsm']
         # self.sorters = []
 
         # self.matchers = ['matcher_fuzzy', 'matcher_full_fuzzy']
